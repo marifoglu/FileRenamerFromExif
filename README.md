@@ -2,6 +2,8 @@
 
 This is a simple Java application that renames image files in a given directory based on the date and time the photo was taken, as specified in the image's EXIF metadata. The app currently supports the JPEG, PNG, and MOV file formats.
 
+Basicly, who is start using Samsung phone and wants use Iphone's photo/video library in the Samsung with same generated name.
+
 ## How to Use
 
 1. Download the source code and compile it using a Java compiler such as `javac`.
