@@ -99,7 +99,12 @@ public class ImageRenamer {
     }
 
     private static boolean isSupportedFileType(String extension) {
-        return SupportedFileType.contains(extension);
+        try {
+            SupportedFileType fileType = SupportedFileType.valueOf(extension.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
     private enum SupportedFileType {
@@ -116,11 +121,6 @@ public class ImageRenamer {
 
         public String getExtension() {
             return extension;
-        }
-
-        public static boolean contains(String extension) {
-            return Arrays.stream(values())
-                    .anyMatch(fileType -> fileType.getExtension().equalsIgnoreCase(extension));
         }
     }
 }
