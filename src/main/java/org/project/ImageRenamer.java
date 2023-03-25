@@ -40,18 +40,18 @@ public class ImageRenamer {
     public static void renameImages(File directory) {
         try (Stream<Path> paths = Files.walk(Paths.get(directory.getPath()))) {
             paths.filter(Files::isRegularFile)
-                    .forEach(file -> {
-                        String fileName = file.getFileName().toString();
+                    .forEach(filePath -> {
+                        String fileName = filePath.getFileName().toString();
                         String extension = "";
 
-                        int i = fileName.lastIndexOf('.');
-                        if (i > 0 && i < fileName.length() - 1) {
-                            extension = fileName.substring(i + 1).toLowerCase();
+                        int extensionIndex = fileName.lastIndexOf('.');
+                        if (extensionIndex > 0 && extensionIndex < fileName.length() - 1) {
+                            extension = fileName.substring(extensionIndex + 1).toLowerCase();
                         }
 
                         if (isSupportedFileType(extension)) {
                             try {
-                                Metadata metadata = ImageMetadataReader.readMetadata(file.toFile());
+                                Metadata metadata = ImageMetadataReader.readMetadata(filePath.toFile());
                                 Date date = null;
 
                                 ExifIFD0Directory exifDirectory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
@@ -63,33 +63,33 @@ public class ImageRenamer {
                                 }
 
                                 if (date == null) {
-                                    date = new Date(file.toFile().lastModified());
+                                    date = new Date(filePath.toFile().lastModified());
                                 }
 
                                 String dateString = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(date);
 
                                 String newFileName = dateString + "." + extension;
 
-                                File newFile = new File(file.getParent().toString(), newFileName);
+                                File newFile = new File(filePath.getParent().toString(), newFileName);
 
                                 int count = 0;
                                 while (newFile.exists()) {
                                     count++;
                                     newFileName = dateString + "_" + count + "." + extension;
-                                    newFile = new File(file.getParent().toString(), newFileName);
+                                    newFile = new File(filePath.getParent().toString(), newFileName);
                                 }
 
-                                if (file.toFile().renameTo(newFile)) {
+                                if (filePath.toFile().renameTo(newFile)) {
                                     logger.info("Renamed file: {}", newFile.getAbsolutePath());
                                 } else {
-                                    logger.error("Failed to rename file: {}", file.toFile().getAbsolutePath());
+                                    logger.error("Failed to rename file: {}", filePath.toFile().getAbsolutePath());
                                 }
                             } catch (ImageProcessingException e) {
-                                logger.error("Error processing file: {}", file.toFile().getAbsolutePath(), e);
+                                logger.error("Error processing file: {}", filePath.toFile().getAbsolutePath(), e);
                             } catch (IOException e) {
-                                logger.error("IO error occurred while processing file: {}", file.toFile().getAbsolutePath(), e);
+                                logger.error("IO error occurred while processing file: {}", filePath.toFile().getAbsolutePath(), e);
                             } catch (Exception e) {
-                                logger.error("Unexpected error occurred while processing file: {}", file.toFile().getAbsolutePath(), e);
+                                logger.error("Unexpected error occurred while processing file: {}", filePath.toFile().getAbsolutePath(), e);
                             }
                         }
                     });
@@ -112,7 +112,6 @@ public class ImageRenamer {
         JPEG("jpeg"),
         PNG("png"),
         MOV("mov");
-
         private final String extension;
 
         SupportedFileType(String extension) {
