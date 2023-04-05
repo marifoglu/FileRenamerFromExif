@@ -15,7 +15,3 @@ Basicly, who is start using Samsung phone and wants use Iphone's photo/video lib
 The app uses the following external libraries:
 
 - [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor) (version 2.16.0) for reading EXIF metadata from image files.
-
-## License
-
-This app is released under the [MIT License](LICENSE).
